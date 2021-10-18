@@ -3,6 +3,7 @@ import praw
 import config
 import time
 import os
+import requests
 
 def bot_login():
     print ("Loggin in...")
@@ -10,7 +11,7 @@ def bot_login():
             password = config.password,
             client_id = config.client_id,
             client_secret = config.client_secret,
-            user_agent ="yourname's Cat comment responder v1.1")
+            user_agent ="name's joke comment responder v1.2")
     print ("Logged in!")
 
     return r 
@@ -18,10 +19,19 @@ def bot_login():
 def run_bot(r, commnets_replied_to):
     print ("Obtaining 25 comments...")
 
-    for comment in r.subreddit ('subreddit name').comments(limit=25):
-        if "cat" in comment.body and comment.id not in comments_replied_to and comment.author != r.user.me():
-            print ("String with \"cat\" found in comment: " + comment.id)
-            comment.reply("yes we're >cute< (https://i.pinimg.com/236x/8e/2d/33/8e2d33848b159f3d325e0bbd45471f82.jpg)")
+    for comment in r.subreddit ("subreddit").comments(limit=25):
+        if "!joke" in comment.body and comment.id not in comments_replied_to and comment.author != r.user.me():   #make "and comment..." a comment to test ur self & add ":" after "_to"
+            print ("String with \"!joke\" found in comment: " + comment.id)
+
+            comment_reply = "You requests a joke about Chuck Norris Here it is:\n\n"
+
+            joke = requests.get("http://api.icndb.com/jokes/random").json()['value']['joke']
+            
+            comment_reply += ">" + joke
+            
+            comment_reply += "\n\nJoke provided by [ICNDb](https://www.icndb.com)"
+
+            comment.reply(comment_reply)
             print ("Replied to comment")
 
             comments_replied_to.append(comment.id)
@@ -54,4 +64,3 @@ print (comments_replied_to)
 while True:
 
     run_bot(r, comments_replied_to)
-    
